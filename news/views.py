@@ -7,6 +7,11 @@ from django.views import generic
 from .forms import CommentForm
 from .models import Comment, News
 
+from django.shortcuts import render
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+
 
 class NewsList(generic.ListView):
     """Список новостей."""
@@ -61,6 +66,12 @@ class NewsComment(
         comment.author = self.request.user
         comment.save()
         return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        # Возвращаем ответ с формой в контексте
+        return self.render_to_response(
+            self.get_context_data(form=form)
+        )
 
     def get_success_url(self):
         post = self.get_object()
@@ -102,3 +113,9 @@ class CommentUpdate(CommentBase, generic.UpdateView):
 class CommentDelete(CommentBase, generic.DeleteView):
     """Удаление комментария."""
     template_name = 'news/delete.html'
+
+
+# @login_required
+def user_logout(request):
+    logout(request)
+    return render(request, 'registration/logout.html')
