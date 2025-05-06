@@ -1,8 +1,58 @@
 import pytest
 from datetime import datetime
 from django.test.client import Client
-from news.models import News, Comment
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+
+from news.models import News, Comment
+
+
+@pytest.fixture
+def home_url():
+    """Фикстура для URL главной страницы с новостями."""
+    return reverse('news:home')
+
+
+@pytest.fixture
+def login_url():
+    """Фикстура для URL login."""
+    return reverse('users:login')
+
+
+@pytest.fixture
+def logout_url():
+    """Фикстура для URL logout."""
+    return reverse('users:logout')
+
+
+
+@pytest.fixture
+def signup_url():
+    """Фикстура для URL успешной регистрации."""
+    return reverse('users:signup')
+
+
+@pytest.fixture
+def detail_url(news):
+    """Фикстура для URL страницы новости с подставленным `pk`."""
+    return reverse('news:detail', kwargs={'pk': news.pk})
+
+
+@pytest.fixture
+def comment_edit_url(comment):
+    """Фикстура для URL редактирования комментария."""
+    return reverse('news:edit', kwargs={'pk': comment.pk})
+
+
+@pytest.fixture
+def comment_delete_url(comment):
+    """Фикстура для URL удаления комментария."""
+    return reverse('news:delete', kwargs={'pk': comment.pk})
+
+
+@pytest.fixture(autouse=True)
+def enable_db_access_for_all_tests(db):
+    """Автоматически предоставляет доступ к БД для всех тестов."""
 
 
 @pytest.fixture
